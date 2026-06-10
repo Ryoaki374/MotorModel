@@ -1,0 +1,414 @@
+\documentclass[a4paper, 11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\mathtoolsset{showonlyrefs} % 参照した式のみ番号を表示
+\usepackage{cases}
+\usepackage{empheq}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{bm} % for bold math symbols
+
+\usepackage{pdflscape} % ページを横向きにするパッケージ
+\usepackage{lipsum}    % ダミーテキスト生成用
+
+
+% geometryパッケージで余白を上下25mm, 左右20mmに設定
+\usepackage[top=25mm, bottom=25mm, left=20mm, right=20mm]{geometry}
+
+
+
+\title{Analytical motor model}
+\author{RA}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\section{Review of [Thierry+ 2011]}
+
+\subsection{Setup}
+\begin{align}\label{Eq: Therry_setup_vectorpotential}
+    \bm{A_I} = A_I(r, \theta) \hat{\mathbf{e}}_{z}\\
+    \bm{A_I} = A_i(r, \theta) \hat{\mathbf{e}}_{z}
+\end{align}
+\begin{align}
+    \theta_i = \frac{\beta}{2} + \frac{2i\pi}{Q} + \theta_0
+\end{align}
+\begin{align}
+    K_z(\theta) = \sum_{m=0}^\infty K_m \cos (mp(\theta-\alpha)) \label{Eq: Therry_setup_currentsheet}
+\end{align}
+
+\subsection{General soluition of Laplace's equation in the i-th slot domain (7)-(25)}
+\begin{align}
+    \frac{\partial^2 A_i}{\partial r^2} + \frac{1}{r} \frac{\partial A_i}{\partial r} + \frac{1}{r^2} \frac{\partial^2 A_i}{\partial \theta^2} = 0, \label{Eq: Thierry_slotdomain} 
+\end{align}
+BCs:
+\begin{align}
+     \left. \frac{\partial A_i}{\partial \theta} \right|_{\theta=\theta_i} &= \left. \frac{\partial A_i}{\partial \theta} \right|_{\theta_i+\beta} = 0\label{Eq: Therry_slotdomain_BC_1}\\
+     \left. \frac{\partial A_i}{\partial r} \right|_{r=R_1} &= 0\label{Eq: Therry_slotdomain_BC_2}\\
+     A_i(R_2,\theta) & = A_{\mathrm I}(R_2,\theta)\label{Eq: Therry_slotdomain_BC_3}
+\end{align}
+ここで角度成分の一般解は
+\begin{numcases}{\Theta(\theta)=}
+a_0 + b_0\theta ~~ (m=0)\\
+a_m \cos m\theta + b_m \sin m\theta ~~ (m\neq 0)
+\end{numcases}
+\color{ForestGreen}
+であり、境界条件\eqref{Eq: Therry_slotdomain_BC_1}から1回微分について
+\begin{numcases}{0=\Theta'(\theta)=}
+b_0 ~~ (m=0)\\
+-m(a_m \sin m\theta_i - b_m \cos m\theta_i) ~~ (m\neq 0)
+\end{numcases}
+これより、$b_0=0$かつ、$a_m\sin m\theta_i = b_m \cos m\theta_i$より、$a_m = C \cos m\theta_i, b_m = C\sin m\theta_i$と置いても一般性を失わない。これより
+\begin{numcases}{\Theta(\theta)=}
+a_0 ~~ (m=0)\\
+C \cos m\theta_i \cos m\theta + C \sin m\theta_i \sin m\theta = C\cos m(\theta-\theta_i) ~~ (m\neq 0)
+\end{numcases}
+また境界条件\eqref{Eq: Therry_slotdomain_BC_1}から
+\begin{align}
+    \Theta'(\theta)|_{\theta=\theta_i+\beta} = -mC\sin m\beta = 0
+\end{align}
+ゆえに$\beta = k\pi/\beta, k=0,1,2\cdots$になる。以上から
+\begin{numcases}{\Theta(\theta)=}
+a_0 ~~ (k=0)\\
+C_k\cos \frac{k\pi}{\beta}(\theta-\theta_i) ~~ (k\neq 0)
+\end{numcases}
+また動径関数の一般解Eq.\eqref{Eq: App_r_meq0}, \eqref{Eq: App_r_mneq0}から
+\begin{align}
+    A_i (r,\theta) = A_0^i + B_0^i \ln r + \sum_{k=1}^\infty (A_k^ir^{\frac{k\pi}{\beta}} + B_k^ir^{-\frac{k\pi}{\beta}})\cos \frac{k\pi}{\beta}(\theta-\theta_i) 
+\end{align}
+ここで境界条件\eqref{Eq: Therry_slotdomain_BC_2}から
+\begin{numcases}{0 = \left. \frac{\partial A_i}{\partial r} \right|_{r=R_1} = }
+\frac{B_0^i}{R_1}\\
+A_k^i \nu_k R_1^{\nu_k-1} - B_k^i \nu_k R_1^{-\nu_k-1}
+\end{numcases}
+これより、$B_0^i = 0$, $B_k^i = A_k^i R_1^{2\nu_k}$なので一般解は
+\begin{align}
+    A_i (r,\theta) & = A_0^i + \sum_{k=1}^\infty A_k^i(r^{\frac{k\pi}{\beta}} + R_1^{\frac{2k\pi}{\beta}}r^{-\frac{k\pi}{\beta}})\cos \frac{k\pi}{\beta}(\theta-\theta_i)\\
+    & = A_0^i + \sum_{k=1}^\infty A_k^iR_1^{{\frac{k\pi}{\beta}}}(R_1^{{-\frac{k\pi}{\beta}}}r^{\frac{k\pi}{\beta}} + R_1^{\frac{k\pi}{\beta}}r^{-\frac{k\pi}{\beta}})\cos \frac{k\pi}{\beta}(\theta-\theta_i)\\
+    & = A_0^i + \sum_{k=1}^\infty A_k^iR_1^{{\frac{k\pi}{\beta}}}P_{\frac{k\pi}{\beta}}(r,R_1)\cos \frac{k\pi}{\beta}(\theta-\theta_i)
+\end{align}
+ここで境界条件Eq. \eqref{Eq: Therry_slotdomain_BC_3}より
+\begin{align}
+    A_I(R_2,\theta) = A_i(R_2,\theta) = A_0^i + \sum_{k=1}^\infty A_k^iR_1^{{\frac{k\pi}{\beta}}}P_{\frac{k\pi}{\beta}}(R_2,R_1)\cos \frac{k\pi}{\beta}(\theta-\theta_i)
+\end{align}
+\color{Black}
+ここで新たな係数$\tilde{A_k^i} = A_k^iR_1^{{\frac{k\pi}{\beta}}}P_{\frac{k\pi}{\beta}}(R_2,R_1)$を使えば$R_1^{{\frac{k\pi}{\beta}}}$を消去して
+\begin{align}
+    A_i(r,\theta) = A_0^i + \sum_{k=1}^\infty A_k^i\frac{P_{\frac{k\pi}{\beta}}(r,R_1)}{P_{\frac{k\pi}{\beta}}(R_1,R_2)}\cos \frac{k\pi}{\beta}(\theta-\theta_i)\label{Eq: Therry_slotdomain_general}
+\end{align}
+ここで$r=R_2$のとき
+\begin{align}
+    A_i(R_2,\theta) = A_I(R_2,\theta) = A_0^i + \sum_{k=1}^\infty A_k^i\cos \frac{k\pi}{\beta}(\theta-\theta_i)
+\end{align}
+として$\theta$のみに依存する周期関数のフーリエ変換の形そのものになる。これとフーリエ展開の式\eqref{Eq: App_Fourie_expansion_a0}, \eqref{Eq: App_Fourie_expansion_an}を見比べると
+\begin{align}
+    A_0^i &= \frac{1}{\beta} \int_{\theta_i}^{\theta_i+\beta} A_I (R_2,\theta) ~d\theta\\
+    A_k^i &= \frac{2}{\beta} \int_{\theta_i}^{\theta_i+\beta} A_I (R_2,\theta)\cos \frac{k\pi}{\beta}(\theta-\theta_i)~d\theta
+\end{align}
+\color{NavyBlue}
+またEq.\eqref{Eq: Therry_slotdomain_general}の1回微分は
+\begin{align}
+     \frac{\partial A_i}{\partial r}  = \sum_{k=1}^\infty A_k^i \frac{k\pi}{\beta r}\frac{E_{\frac{k\pi}{\beta}}(r,R_1)}{P_{\frac{k\pi}{\beta}}(R_1,R_2)}\cos \frac{k\pi}{\beta}(\theta-\theta_i)\label{Eq: Therry_slotdomain_general_deriv}
+\end{align}
+さらにEq. \eqref{Eq: Therry_airgap_general}を用いると
+\begin{align}
+     A_k^i &= \frac{2}{\beta} \int_{\theta_i}^{\theta_i+\beta} \bigg\{ \sum_{n=1}^\infty \left(A_n^I\frac{R_2}{n}\displaystyle \frac{P_n(R_2,R_3)}{E_n(R_2,R_3)} + B_n^I\frac{R_3}{n} \frac{P_n(R_2,R_2)}{E_n(R_3,R_2)} \right)\cos(n\theta) \nonumber \\ & + \sum_{n=1}^\infty \left(C_n^I\frac{R_2}{n}\displaystyle \frac{P_n(R_2,R_3)}{E_n(R_2,R_3)} + D_n^I\frac{R_3}{n} \frac{P_n(R_2,R_2)}{E_n(R_3,R_2)} \right)\sin(n\theta)\bigg\}\cos \frac{k\pi}{\beta}(\theta-\theta_i)~d\theta \nonumber\\
+     & = \sum_{n=1}^\infty \left(A_n^I\frac{2R_2}{n\beta}\displaystyle \frac{P_n(R_2,R_3)}{E_n(R_2,R_3)} + B_n^I\frac{4R_3}{n\beta} \frac{1}{E_n(R_3,R_2)} \right)f(k,n,i) \nonumber \\ & + \sum_{n=1}^\infty \left(C_n^I\frac{2R_2}{n\beta}\displaystyle \frac{P_n(R_2,R_3)}{E_n(R_2,R_3)} + D_n^I\frac{4R_3}{n\beta} \frac{1}{E_n(R_3,R_2)} \right)g(k,n,i)
+\end{align}
+
+\color{Black}
+\subsection{General soluition of Laplace's equation in the air-gap (28)-(39)}
+\begin{align}
+    \frac{\partial^2 A_I}{\partial r^2} + \frac{1}{r} \frac{\partial A_I}{\partial r} + \frac{1}{r^2} \frac{\partial^2 A_I}{\partial \theta^2} = 0, \label{Eq: Thierry_airgap} 
+\end{align}
+BCs: at $r=R_3$,
+\begin{align}
+     \left. \frac{\partial A_I}{\partial r} \right|_{r=R_3} = \mu_0K(\theta)
+\end{align}
+at $r=R_2$ はスロットがあるので$\theta$の関数になる:
+\begin{numcases}{\left. \frac{\partial A_I}{\partial r} \right|_{r=R_2} = f(\theta) =}
+    \left.\frac{\partial A_i}{\partial r} \right|_{r=R_2}
+    ~~~~\mathrm{for~in~a~slot,~\theta_i \leq \theta \leq \theta_i+\beta}\label{Eq: Therry_airgap_BC_1}\\
+    0~~~~\text{for out of slot} \label{Eq: Therry_airgap_BC_2}
+\end{numcases}
+Sec.\ref{Sec: App_gen_2dpolar}から、Eq.\eqref{Eq: Thierry_airgap}の一般解は
+\begin{align}
+    A_{\mathrm{I}}(r,\theta) = A_0 + B_0^I\ln r + \sum_{n=1}^\infty (A_n r^n + B_n r^{-n})\cos(n\theta)
+    &+ (C_n r^n + D_n r^{-n})\sin(n\theta)\label{Eq: App_Therry_airgap}
+\end{align}
+また$r$での1回微分は
+\begin{align}
+    \left. \frac{\partial A_I}{\partial r} \right. = B_0^I \frac{\theta}{r} + \sum_{n=1}^\infty n(A_n^I r^{n-1} + B_n^I r^{-n-1})\cos n\theta + n(C_n^I r^{n-1} + D_n^I r^{-n-1})\sin n\theta \label{Eq: App_Therry_airgap_deriv}
+\end{align}
+\color{ForestGreen}
+Eq. \eqref{Eq: App_Therry_airgap_deriv}について
+\begin{align}
+    \left. \frac{\partial A_I}{\partial r} \right|_{r=R_2} = B_0^I \frac{\theta}{R_2} + \sum_{n=1}^\infty n(A_n^I R_2^{n-1} - B_n^I R_2^{-n-1})\cos n\theta + n(C_n^I R_2^{n-1} - D_n^I R_2^{-n-1})\sin n\theta \label{Eq: App_Therry_airgap_deriv}
+\end{align}
+境界条件\eqref{Eq: Therry_airgap_BC_1}, \eqref{Eq: Therry_airgap_BC_2}より、2$\pi$の周期関数なので$B_0^I = 0$, また\eqref{Eq: Therry_airgap_BC_1}, \eqref{Eq: Therry_airgap_BC_2}が$\theta$の周期関数であることに注目して、フーリエ級数展開すると
+\begin{align}
+    \left. \frac{\partial A_I}{\partial r} \right|_{r=R_2} & = f(\theta) = \frac{a_0}{2} + \sum_{k=1}^\infty (f_k\cos k\theta + f_k' \sin k\theta)\\
+    \left. \frac{\partial A_I}{\partial r} \right|_{r=R_3}  & = \mu_0K(\theta) = \frac{a_0'}{2} + \mu_0 \sum_{k=1}^\infty (K_k\cos k\theta + K_k' \sin k\theta)
+\end{align}
+$\cos$の項に着目すると
+\begin{numcases}{}
+    n(A_n^I R_2^{n-1} - B_n^I R_2^{-n-1}) = f_n \label{Eq: Therry_airgap_BC_1_2}\\
+    n(A_n^I R_3^{n-1} - B_n^I R_3^{-n-1}) = \mu_0 K_n\label{Eq: Therry_airgap_BC_2_2}
+\end{numcases}
+まず\eqref{Eq: Therry_airgap_BC_1_2}について
+\begin{align}
+    A_n^IR_2^n - B_n^I R_2^{-n} &= \frac{f_n}{n}R_2\\
+    B_n^I & = A_n^I R_2^{2n} - \frac{f_n}{n}R_2^{n+1}    
+\end{align}
+これと\eqref{Eq: Therry_airgap_BC_2_2}について
+\begin{align}
+    A_n^IR_3^n - \left(A_n^I R_2^{2n} - \frac{f_n}{n}R_2^{n+1}\right)R_3^{-n} & = \frac{R_3}{n}\mu_0K_n\\
+    A_n^IR_3^{n+1} - A_n^I R_2^{2n} +\frac{f_n}{n}R_2^{n+1} & = \frac{R_3^{n+1}}{n}\mu_0K_n\\
+    A_n^I & = \frac{(R_2R_3)^{n+1}}{n(R_3^{2n}-R_2^{2n})}\left(\mu_0K_n R_2^{-n-1} - f_n R_3^{-n-1}\right)
+\end{align}
+同様に$A_n^I$を削除すると
+\begin{align}
+    A_n^I & = B_n^I R_2^{-2n} + \frac{f_n}{n}R_2^{-n-1}\\
+    B_n^I & = \frac{(R_2R_3)^{n+1}}{n(R_3^{2n}-R_2^{2n})}\left(\mu_0K_n R_2^{n-1} - f_n R_3^{n-1}\right)
+\end{align}
+これらより、\eqref{Eq: App_Therry_airgap}の$\cos$項について
+\begin{align}
+    A_n r^n + B_n r^{-n} & = \Delta_n r^n \left(\mu_0K_n R_2^{-n-1} - f_n R_3^{-n-1}\right) + \Delta_n r^{-n} \left(\mu_0K_n R_2^{n-1} - f_n R_3^{n-1}\right)\\
+    & = - \Delta_nf_n (r^nR_3^{-n-1} + r^{-n}R_3^{n-1}) + \Delta_n \mu_0K_n (r^n R_2^{-n-1} + r^{-n}R_2^{n-1})
+\end{align}
+これらについて
+\begin{align}
+    -\Delta_nf_n(r^nR_3^{-n-1} + r^{-n}R_3^{n-1}) & = -f_n \frac{R_2}{n} \frac{R_2^nR_3^n}{R_3^{2n} - R_2^{2n}} (R_3^{-n}r^n + r^{-n} R_3^n)\\
+    & = -f_n\frac{R_2}{n} \displaystyle \frac{1}{\frac{R_3^n}{R_2^n}-\frac{R_2^n}{R_3^n}} \left(\frac{r^n}{R_3^n} + \frac{R_3^n}{r^n}\right)\\
+    & =  -f_n\frac{R_2}{n}\displaystyle \frac{P_n(r,R_3)}{E_n(R_3,R_2)}\\
+    & = f_n\frac{R_2}{n}\displaystyle \frac{P_n(r,R_3)}{E_n(R_2,R_3)}
+\end{align}
+同様の変形により
+\begin{align}
+    \Delta_n \mu_0K_n (r^n R_2^{-n-1} + r^{-n}R_2^{n-1}) &= \mu_0K_n\frac{R_3}{n} \frac{P_n(r,R_2)}{E_n(R_3,R_2)}
+\end{align}
+\color{Black}
+\eqref{Eq: App_Therry_airgap}における$\sin$の項も同様に計算できる。これより、$f_n\rightarrow A_n^I,~ \mu_0K_n \rightarrow B_n^I$などと読み替えるとEq. \eqref{Eq: App_Therry_airgap}は次のように書き換えられる。
+\begin{align}
+    A_{\mathrm{I}}(r,\theta) = A_0^I & + \sum_{n=1}^\infty \left(A_n^I\frac{R_2}{n}\displaystyle \frac{P_n(r,R_3)}{E_n(R_2,R_3)} + B_n^I\frac{R_3}{n} \frac{P_n(r,R_2)}{E_n(R_3,R_2)} \right)\cos(n\theta) \nonumber \\ & + \sum_{n=1}^\infty \left(C_n^I\frac{R_2}{n}\displaystyle \frac{P_n(r,R_3)}{E_n(R_2,R_3)} + D_n^I\frac{R_3}{n} \frac{P_n(r,R_2)}{E_n(R_3,R_2)} \right)\sin(n\theta)\label{Eq: Therry_airgap_general}
+\end{align}
+これらの係数は$f_n\rightarrow A_n^I$などの読み替えをしたことを思い出せば、フーリエ級数展開の関係式から
+\begin{align}
+    A_n^I & = \frac{2}{2\pi} \int_0^{2\pi} f(\theta) \cos n\theta~d\theta \\
+    B_n^I & = \frac{2}{2\pi} \int_0^{2\pi} \mu_0 K(\theta) \cos n\theta~d\theta \\
+    C_n^I &= \frac{2}{2\pi} \int_0^{2\pi} f(\theta) \sin n\theta~d\theta \\
+    D_n^I &= \frac{2}{2\pi} \int_0^{2\pi} \mu_0 K(\theta) \sin n\theta~d\theta
+\end{align}
+\color{ForestGreen}
+境界条件Eq.\eqref{Eq: Therry_airgap_BC_1}, \eqref{Eq: Therry_airgap_BC_1}と微分形\eqref{Eq: Therry_slotdomain_general_deriv}から
+\begin{align}
+    A_n^I & = \frac{2}{2\pi}\sum_{i=1}^Q \int_{\theta_i}^{\theta_i+\beta} \left. \frac{\partial A_i}{\partial r} \right|_{r=R_2} \cos n\theta~d\theta\\
+    & = \frac{2}{2\pi}\sum_{i=1}^Q \sum_{k=1}^\infty A_k^i \frac{k\pi}{\beta R_2}\frac{E_{\frac{k\pi}{\beta}}(R_2,R_1)}{P_{\frac{k\pi}{\beta}}(R_1,R_2)}\int_{\theta_i}^{\theta_i+\beta} \cos \frac{k\pi}{\beta}(\theta-\theta_i)\cos n\theta~d\theta\\
+    & = \sum_{i=1}^Q \sum_{k=1}^\infty -A_k^i \frac{k}{\beta R_2}\frac{E_{\frac{k\pi}{\beta}}(R_2,R_1)}{P_{\frac{k\pi}{\beta}}(R_1,R_2)}\int_{\theta_i}^{\theta_i+\beta} \cos \frac{k\pi}{\beta}(\theta-\theta_i)\cos n\theta~d\theta
+\end{align}
+同様にして
+\begin{align}
+    C_n^I & = \frac{2}{2\pi}\sum_{i=1}^Q \int_{\theta_i}^{\theta_i+\beta} \left. \frac{\partial A_i}{\partial r} \right|_{r=R_2} \sin n\theta~d\theta\\  
+    & = \sum_{i=1}^Q \sum_{k=1}^\infty -A_k^i \frac{k}{\beta R_2}\frac{E_{\frac{k\pi}{\beta}}(R_2,R_1)}{P_{\frac{k\pi}{\beta}}(R_1,R_2)}\int_{\theta_i}^{\theta_i+\beta} \cos \frac{k\pi}{\beta}(\theta-\theta_i)\sin n\theta~d\theta
+\end{align}
+Eq.\eqref{Eq: Therry_setup_currentsheet}から
+\begin{align}
+    B_n^I & = \frac{2}{2\pi} \int_0^{2\pi} \mu_0 K(\theta) \cos n\theta~d\theta\\
+    & = \frac{1}{\pi}\int_0^{2\pi} \mu_0\sum_{m=0}^\infty K_m \cos (mp(\theta-\alpha)) \cos n\theta~d\theta\\
+    & = \frac{\mu_0}{\pi} \sum_{m=0}^\infty K_m \int_0^{2\pi} (\cos mp\theta \cos mp\alpha + \sin mp\theta \sin mp\alpha)\cos n\theta~d\theta\\
+    & = 
+    \begin{dcases}
+    \sum_{m=1}^\infty \mu_0 K_m \cos mp\alpha ~~ (n=mp)\\
+    ~~ 0 ~~(n\neq mp)
+    \end{dcases}
+\end{align}
+同様の計算から
+\begin{align}
+    B_n^I & = \frac{2}{2\pi} \int_0^{2\pi} \mu_0 K(\theta) \sin n\theta~d\theta = 
+    \begin{dcases}
+    \sum_{m=1}^\infty \mu_0 K_m \sin mp\alpha ~~ (n=mp)\\
+    ~~ 0 ~~(n\neq mp)
+    \end{dcases}
+\end{align}
+
+
+\color{Black}
+\subsection{Magnetic field in the air-gap region}
+Eq.\eqref{Eq: App_magneticfield}から
+\begin{align}
+    B_{Ir}(r, \theta) & =  \frac{1}{r}\frac{\partial A_i}{\partial \theta} \\
+    & = \sum_{n=1}^{\infty} -\left(A_n^I \frac{R_2}{r} \frac{P_n(r, R_3)}{E_n(R_2, R_3)} + B_n^I \frac{R_3}{r} \frac{P_n(r, R_2)}{E_n(R_3, R_2)}\right) \sin(n\theta)\nonumber \\
+& + \sum_{n=1}^{\infty} \left(C_n^I \frac{R_2}{r} \frac{P_n(r, R_3)}{E_n(R_2, R_3)} + D_n^I \frac{R_3}{r} \frac{P_n(r, R_2)}{E_n(R_3, R_2)}\right) \cos(n\theta)\\
+& = \sum_{n=1}^{\infty} (W_n\sin n\theta + Y_n \cos n\theta)
+\end{align}
+\begin{align}
+    B_{I\theta}(r, \theta) & = -\frac{\partial A_i}{\partial r}\\
+    & = \sum_{n=1}^{\infty} -\left(A_n^I \frac{R_2}{r} \frac{E_n(r, R_3)}{E_n(R_2, R_3)} + B_n^I \frac{R_3}{r} \frac{E_n(r, R_2)}{E_n(R_3, R_2)}\right) \cos(n\theta)\nonumber \\
+& + \sum_{n=1}^{\infty} -\left(C_n^I \frac{R_2}{r} \frac{E_n(r, R_3)}{E_n(R_2, R_3)} + D_n^I \frac{R_3}{r} \frac{E_n(r, R_2)}{E_n(R_3, R_2)}\right) \sin(n\theta)\\
+& = \sum_{n=1}^{\infty} (Z_n\cos n\theta + X_n \sin n\theta)
+\end{align}
+\color{ForestGreen}
+where
+\begin{align}
+    W_n &= -A_n^I \frac{R_2}{R_e} \frac{P_n(R_e, R_3)}{E_n(R_2, R_3)} - B_n^I \frac{R_3}{R_e} \frac{P_n(R_e, R_2)}{E_n(R_3, R_2)} \\
+X_n &= -C_n^I \frac{R_2}{R_e} \frac{E_n(R_e, R_3)}{E_n(R_2, R_3)} - D_n^I \frac{R_3}{R_e} \frac{E_n(R_e, R_2)}{E_n(R_3, R_2)} \\
+Y_n &= C_n^I \frac{R_2}{R_e} \frac{P_n(R_e, R_3)}{E_n(R_2, R_3)} + D_n^I \frac{R_3}{R_e} \frac{P_n(R_e, R_2)}{E_n(R_3, R_2)} \\
+Z_n &= -A_n^I \frac{R_2}{R_e} \frac{E_n(R_e, R_3)}{E_n(R_2, R_3)} - B_n^I \frac{R_3}{R_e} \frac{E_n(R_e, R_2)}{E_n(R_3, R_2)}
+\end{align}
+
+\color{Black}
+\subsection{Magnetic toruque}
+Eq. \eqref{Eq: App_magnetictorque}から
+\begin{align}
+    \tau_e & = \frac{L R_e^2}{\mu_0} \int_0^{2\pi} B_r(R_e, \theta, \alpha) \cdot B_\theta(R_e, \theta, \alpha) \, d\theta \\ 
+    & =  \frac{L R_e^2}{\mu_0} \sum_{n=1}^{\infty} \int_0^{2\pi} (W_n\sin n\theta + Y_n \cos n\theta)(Z_n\cos n\theta + X_n \sin n\theta)~d\theta \\
+    & =  \frac{\pi L R_e^2}{\mu_0} \sum_{n=1}^{\infty}  (W_nX_n + Y_nZ_n)
+\end{align}
+
+
+
+\color{NavyBlue}
+\subsection{P\&E}
+論文中で定義されているやつ
+\begin{align}
+    P_{z}(x,y) = \left(\frac{x}{y}\right)^z + \left(\frac{x}{y}\right)^{-z}\\
+    E_{z}(x,y) = \left(\frac{x}{y}\right)^z - \left(\frac{x}{y}\right)^{-z}\\
+\end{align}
+\begin{align}
+    \frac{\partial }{\partial x}P_{z}(x,y) & = n\frac{x^{n-1}}{y^n} - n\frac{y^n}{x^{n+1}}\\
+    & = \frac{n}{x}E_z(x,y)\\
+    \frac{\partial }{\partial y}P_{z}(x,y) & = -n\frac{x^n}{y^{n+1}} + n\frac{y^{n-1}}{x^{n}}\\
+    & = \frac{n}{y}E_z(y,x)
+\end{align}
+\subsection{f\&g}
+\begin{align}
+    f(k,n,i) = \int_{\theta_i}^{\theta_i+\beta} \cos n\theta \cos\left(\frac{k\pi}{\beta}(\theta-\theta_i)\right)~d\theta
+\end{align}
+for $k\pi\neq n\beta$のとき
+\begin{align}
+    f(k,n,i) & = \frac{1}{2}\int_{\theta_i}^{\theta_i+\beta} \cos \frac{1}{\beta}(n\beta\theta - k\pi (\theta-\theta_i)) + \cos \frac{1}{\beta}(n\beta\theta+k\pi(\theta-\theta_i))~d\theta\\
+    & = \frac{1}{2}\int_{\theta_i}^{\theta_i+\beta} \cos \frac{1}{\beta}\left[(n\beta-k\pi)\theta +k\pi\theta_i\right] + \cos \frac{1}{\beta}\left[(n\beta+k\pi)\theta-k\pi\theta_i\right]~d\theta\\
+    & = \frac{1}{2}\left[\frac{\beta}{n\beta-k\pi} \sin \frac{1}{\beta}\left[(n\beta-k\pi)\theta +k\pi\theta_i\right] + \frac{\beta}{n\beta+k\pi}\sin \frac{1}{\beta}\left[(n\beta+k\pi)\theta-k\pi\theta_i\right]\right]_{\theta_i}^{\theta_i+\beta}
+\end{align}
+ここで$\sin(x+k\pi) = (-1)^k \sin x$より
+\begin{align}
+    \sin \frac{1}{\beta}\left[(n\beta-k\pi)(\theta_i+\beta) +k\pi\theta_i\right] & - \sin \frac{1}{\beta}\left[(n\beta-k\pi)\theta_i +k\pi\theta_i\right]\\
+    &=  \sin \frac{1}{\beta}\left[n\beta(\theta_i+\beta) +k\pi\beta\right] - \sin \frac{1}{\beta}n\beta\theta_i\\
+    &=  \sin \left[n(\theta_i+\beta) +k\pi\right] - \sin n\theta_i\\
+    & = (-1)^k \sin n(\theta_i+\beta) - \sin n\theta_i
+\end{align}
+同様にして
+\begin{align}
+    \sin \frac{1}{\beta}\left[(n\beta+k\pi)(\theta+\beta)-k\pi\theta_i\right] & - \sin \frac{1}{\beta}\left[(n\beta+k\pi)\theta_i-k\pi\theta_i\right]\\
+    & = (-1)^k \sin n(\theta_i+\beta) - \sin n\theta_i
+\end{align}
+ゆえに
+\begin{align}
+    f(k,n,i)  &= \frac{\beta}{2}\left\{(-1)^k \sin n(\theta_i+\beta) - \sin n\theta_i\right\}\frac{(n\beta+k\pi) + (n\beta-k\pi)}{(n\beta+k\pi)(n\beta-k\pi)}\\
+    & = - \frac{n\beta^2\left[(-1)^k \sin n(\theta_i+\beta) - \sin n\theta_i\right]}{k^2\pi^2 - n^2\beta^2}
+\end{align}
+
+for $k\pi= n\beta$のとき
+\begin{align}
+    f(k,n,i) &= \frac{1}{2}\int_{\theta_i}^{\theta_i+\beta} \cos\frac{k\pi}{\beta}\theta_i + \cos \frac{1}{\beta} (2k\pi\theta-k\pi\theta_i)~d\theta\\
+    & = \frac{1}{2}\left[\theta\cos\frac{k\pi}{\beta}\theta_i + \frac{\beta}{2k\pi}\sin\frac{1}{\beta} (2k\pi\theta-k\pi\theta_i)\right]_{\theta_i}^{\theta_i+\beta}\\
+    & = \frac{1}{2}\left[\beta\cos\frac{k\pi}{\beta}\theta_i + \frac{\beta}{2k\pi}\left\{\sin\frac{1}{\beta} (k\pi\theta_i+2k\pi\beta)-\sin \frac{1}{\beta}k\pi\theta_i)\right\}\right]\\ 
+    & = \frac{\beta}{2}\left[\cos n\theta_i + \frac{1}{2k\pi}\left\{\sin\frac{1}{\beta} (n\beta\theta_i+2\pi\beta^2)-\sin \frac{1}{\beta}n\beta\theta_i)\right\}\right]\\ 
+    & = \frac{\beta}{2}\left[\cos n\theta_i + \frac{1}{2k\pi}\left(\sin(n\theta_i+2\pi\beta)-\sin n\theta_i)\right)\right]
+\end{align}
+
+\color{Black}
+
+
+
+
+
+\section{Appendix for appendix}
+\subsection{Nabla in cylindrical cordinate}
+$$
+\nabla = \hat{\mathbf{e}}_{r} \frac{\partial}{\partial r} + \hat{\mathbf{e}}_{\phi} \frac{1}{r} \frac{\partial}{\partial \theta} + \hat{\mathbf{e}}_{z} \frac{\partial}{\partial z}
+$$
+Rotation
+$$
+\nabla \times \mathbf{A} = \left( \frac{1}{r} \frac{\partial A_{z}}{\partial \theta} - \frac{\partial A_{\theta}}{\partial z} \right) \hat{\mathbf{e}}_{r} + \left( \frac{\partial A_{r}}{\partial z} - \frac{\partial A_{z}}{\partial r} \right) \hat{\mathbf{e}}_{\theta} + \frac{1}{r} \left( \frac{\partial}{\partial r} (r A_{\theta}) - \frac{\partial A_{r}}{\partial \theta} \right) \hat{\mathbf{e}}_{z}
+$$
+
+\subsection{Laplacian in cylindrical cordinate}
+\begin{align}
+    \nabla^2 f = \frac{\partial^2 f}{\partial r^2} + \frac{1}{r} \frac{\partial f}{\partial r} + \frac{1}{r^2} \frac{\partial^2 f}{\partial \theta^2} + \frac{\partial^2 f}{\partial z^2}
+\end{align}
+
+\subsection{Fourie expansion}
+\begin{align}
+    f(x) &= a_0 + \sum_{n=1}^\infty \left(a_n \cos\frac{2\pi n}{T}x + b_n\sin\frac{2\pi n}{T}x\right)\\
+    a_0 & = \frac{1}{T}\int_0^T f(x) dx \label{Eq: App_Fourie_expansion_a0}\\
+    a_n & = \frac{2}{T}\int_0^T f(x) \cos\frac{2\pi n}{T}x ~dx\label{Eq: App_Fourie_expansion_an}\\
+    b_n & = \frac{2}{T}\int_0^T f(x) \sin\frac{2\pi n}{T}x ~dx\label{Eq: App_Fourie_expansion_bn}
+\end{align}
+
+\subsection{Genaral solution of 2d-polar scholar}\label{Sec: App_gen_2dpolar}
+$u(r,\theta)$に対して次のラプラス方程式の一般解を求める。
+\begin{align}
+    \nabla^2 u  = \frac{\partial^2 u}{\partial r^2} + \frac{1}{r} \frac{\partial u}{\partial r} + \frac{1}{r^2} \frac{\partial^2 u}{\partial \theta^2} = 0
+\end{align}
+まず変数分離して$u(r,\theta) = R(r)\Theta(\theta)$として代入すると
+\begin{align}
+    \Theta R'' + \frac{1}{r}R'\Theta + \frac{1}{r^2}R\Theta'' &= 0 \\
+    \therefore \frac{r^2R''+rR'}{R} &= -\frac{\Theta''}{\Theta}
+\end{align}
+これが成り立つように定数$m^2$を取ると
+\begin{empheq}[left=\empheqlbrace]{align}
+\Theta'' + m^2\Theta &= 0 \label{eq:app_theta}\\
+r^2R'' + rR' - m^2 R &= 0 \label{eq:app_r}
+\end{empheq}
+\eqref{eq:app_theta}より
+解の周期性 $\Theta(\theta) = \Theta(\theta+2\pi)$ を仮定すると、分離定数は$m=0, 1, 2, \dots$となる必要がある。これを元に場合分けして解くと
+\begin{empheq}[left=\empheqlbrace]{align}
+a_0 + b_0\theta ~~ (m=0)\\
+a_m \cos m\theta + b_m \sin m\theta ~~ (m\neq 0)
+\end{empheq}
+一方で\eqref{eq:app_r}は、
+\begin{empheq}[left=\empheqlbrace]{align}
+c_0 + d_0\ln r ~~ (m=0) \label{Eq: App_r_meq0}\\
+c_m r^m + d_m r^{-m} ~~ (m\neq 0) \label{Eq: App_r_mneq0}
+\end{empheq}
+特に$m\neq 0$のときは、特解$R(r)=r^\alpha$を入れて$r^\alpha(\alpha^2+\alpha -m ^2)=0\rightarrow \alpha=\pm m$から得られる。一般解はこれの重ね合わせで
+\begin{align}
+    u(r,\theta) = A_0 + B_0 \ln r + \sum_{m=1}^\infty (A_m r^m + B_m r^{-m})\cos(m\theta)
+    &+ (C_m r^m + D_m r^{-m})\sin(m\theta)
+\end{align}
+
+\subsection{Maxwell's equation}
+Magnetic field with given vector potential Eq. \eqref{Eq: Therry_setup_vectorpotential} in 2d-polar $A(r,\theta)$
+\begin{align}
+    \bm{B} & = \nabla \times \bm{A} \\
+    & = B_{Ir}(r,\theta)\hat{\bm{e}}_{r} + B_{I\theta}\hat{\bm{e}}_{\theta} \\
+    & = \frac{1}{r} \frac{\partial A_{z}}{\partial \theta}\hat{\bm{e}}_{r} - \frac{\partial A_{z}}{\partial r}\hat{\bm{e}}_{\theta}\label{Eq: App_magneticfield}
+\end{align}
+
+\subsection{Maxwell's stress tensor}
+\begin{align}
+    T_{ij} = \frac{1}{\mu_0} \left(B_iB_j - \frac{1}{2}\delta_{ij}B^2\right)
+\end{align}
+円筒座標系において、半径$r$の円筒表面に加わる応力ベクトル $\bm{t}$ の各成分 ($t_r$, $t_\theta$, $t_z$) は、$t_i = \sum_j T_{ij} n_j$ の関係から、次のように求まる。
+\begin{align*}
+    t_r &= T_{rr} = \frac{1}{2\mu_0}(B_r^2 - B_\theta^2 - B_z^2) \\
+    t_\theta &= T_{\theta r} = \frac{1}{\mu_0}B_r B_\theta \\
+    t_z &= T_{zr} = \frac{1}{\mu_0}B_r B_z
+\end{align*}
+このうち回転に寄与するのは円の接線方向成分である$t_\theta = T_{\theta r}$である。ここで$z$軸周りのトルク $\tau_z$ は、位置ベクトル $\bm{r}$ と応力ベクトル $\bm{t}$ の外積 $\mathbf{r} \times \mathbf{t}$ のz成分を円筒表面で積分したものになる。まず外積は
+\begin{align}
+     \bm{r} \times \bm{t} & = (r \mathbf{\hat{e}}_r) \times (t_r \mathbf{\hat{e}}_r + t_\theta \mathbf{\hat{e}}_\theta + t_z \mathbf{\hat{e}}_z)\\
+     & = r t_\theta (\mathbf{\hat{e}}_r \times \mathbf{\hat{e}}_\theta) + r t_z (\mathbf{\hat{e}}_r \times \mathbf{\hat{e}}_z) \\
+     &= (r t_\theta) \mathbf{\hat{e}}_z - (r t_z) \mathbf{\hat{e}}_\theta
+\end{align}
+これより$z$軸周りの単位面積当たりのトルクは$(r t_\theta)$であることがわかる。以上から求めるトルクは$r=R_2$の円筒表面で
+\begin{align}
+    \tau_e & = \int_0^L \int_0^{2\pi} \left( \frac{R_e}{\mu_0} B_r B_\theta \right) (R_e \, d\theta \, dz)\\
+    & = \frac{L R_e^2}{\mu_0} \int_0^{2\pi} B_r(R_e, \theta, \alpha) \cdot B_\theta(R_e, \theta, \alpha) \, d\theta\label{Eq: App_magnetictorque}
+\end{align}
+
+
+\end{document}
