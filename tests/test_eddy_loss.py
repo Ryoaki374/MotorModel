@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from examples.sample_case import make_four_pole_sample
+from motor_eddy import make_four_pole_sample
 from motor_eddy import CoilGeometry, Rotor, SimulationConfig
 from motor_eddy.core import eddy_loss_round_wire, fft_harmonics_over_rotor_angle, run_eddy_loss_simulation
 from motor_eddy.harmonic2d import CylindricalHarmonicSpec, run_cylindrical_harmonic_model

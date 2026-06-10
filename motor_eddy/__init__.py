@@ -10,6 +10,7 @@ from .core import (
     run_eddy_loss_simulation,
 )
 from .harmonic2d import CylindricalHarmonicSpec, run_cylindrical_harmonic_model
+from .sample_cases import make_four_pole_sample
 
 __all__ = [
     "Material",
@@ -26,4 +27,5 @@ __all__ = [
     "run_eddy_loss_simulation",
     "CylindricalHarmonicSpec",
     "run_cylindrical_harmonic_model",
+    "make_four_pole_sample",
 ]

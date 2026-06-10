@@ -32,8 +32,9 @@ A fast scaling model represents the PM field as cylindrical spatial harmonics \(
 - `motor_eddy/models.py` - dataclasses for materials, magnets, rotor, coil, and simulation settings.
 - `motor_eddy/core.py` - 3D magnetic-charge model, FFT harmonic extraction, loss calculation, diagnostics.
 - `motor_eddy/harmonic2d.py` - 2D cylindrical harmonic comparison model.
-- `examples/sample_case.py` - four-pole sample motor input.
-- `scripts/run_sample.py` - generates sample numerical output and plots.
+- `motor_eddy/sample_cases.py` - reusable four-pole sample motor input factory.
+- `examples/sample_case.ipynb` - notebook form of the sample input case.
+- `scripts/run_sample.ipynb` - notebook that generates sample numerical output and plots.
 - `tests/test_eddy_loss.py` - validation tests requested in the specification.
 - `model_notes.md` - assumptions, equations, warnings, and unresolved issues.
 
@@ -41,7 +42,7 @@ A fast scaling model represents the PM field as cylindrical spatial harmonics \(
 
 ```bash
 python -m pytest
-python scripts/run_sample.py
+jupyter notebook scripts/run_sample.ipynb
 ```
 
 Sample plots are written to `outputs/`:
@@ -54,7 +55,7 @@ Sample plots are written to `outputs/`:
 ## Minimal API example
 
 ```python
-from examples.sample_case import make_four_pole_sample
+from motor_eddy import make_four_pole_sample
 from motor_eddy import run_eddy_loss_simulation
 
 coil, rotor, config = make_four_pole_sample()
