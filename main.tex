@@ -411,4 +411,63 @@ Magnetic field with given vector potential Eq. \eqref{Eq: Therry_setup_vectorpot
 \end{align}
 
 
+
+\section{Coreless open-circuit winding eddy-current forward model}
+
+For the Python implementation in \texttt{motor\_eddy}, the slot, tooth-tip, iron, armature reaction, and load-current terms reviewed above are removed.  The retained modeling chain is a direct forward calculation from permanent-magnet geometry to local conductor loss,
+\begin{align}
+    \{\mathrm{magnet\ geometry},\mathbf{M},\Omega\}
+    \rightarrow \mathbf{B}(\mathbf{x},\psi)
+    \rightarrow \mathbf{B}_{\perp}(\mathbf{x},\psi)
+    \rightarrow P_{\mathrm{eddy}} .
+\end{align}
+The open-circuit terminal condition is approximated at strand scale by the standard thin-round-wire eddy-current expression.  The net transport current is zero, but local circulating current density remains because the imposed magnet field varies across the wire cross-section.
+
+Outside uniformly magnetized permanent magnets, the implementation uses magnetic surface charge rather than a finite-element solve:
+\begin{align}
+    \phi_m(\mathbf{x}) &= \frac{1}{4\pi}\int_{\partial V_m}\frac{\sigma_m(\mathbf{x}')}{|\mathbf{x}-\mathbf{x}'|}\,dS',\\
+    \sigma_m &= \mathbf{M}\cdot\mathbf{n},\\
+    \mathbf{B}(\mathbf{x}) &= \frac{\mu_0}{4\pi}\sum_m\int_{\partial V_m}
+    \sigma_m(\mathbf{x}')\frac{\mathbf{x}-\mathbf{x}'}{|\mathbf{x}-\mathbf{x}'|^3}\,dS'.
+\end{align}
+Each magnet is approximated as a finite rectangular prism in the local basis
+$\hat{\mathbf e}_r(\theta_m)$, $\hat{\mathbf e}_\theta(\theta_m)$, $\hat{\mathbf e}_z$.
+For an N pole, $\mathbf{M}=+(B_r/\mu_0)\hat{\mathbf e}_r$; for an S pole,
+$\mathbf{M}=-(B_r/\mu_0)\hat{\mathbf e}_r$.
+
+At each coil quadrature point the component parallel to the local wire tangent is removed:
+\begin{align}
+    \mathbf{B}_{\perp}=\mathbf{B}-(\mathbf{B}\cdot\hat{\mathbf t})\hat{\mathbf t}.
+\end{align}
+Rotor-angle samples are expanded as
+\begin{align}
+    \mathbf{B}_{\perp}(\psi)=\mathbf{a}_0+
+    \sum_{h=1}^{H}\left[\mathbf{a}_h\cos(hp\psi)+\mathbf{b}_h\sin(hp\psi)\right],
+\end{align}
+with peak-amplitude convention
+\begin{align}
+    |\mathbf{B}_{\perp,h}|_{\mathrm{pk}}^2=
+    \sum_{c=x,y,z}(a_{h,c}^2+b_{h,c}^2).
+\end{align}
+The discrete loss evaluated by the code is
+\begin{align}
+    P_{\mathrm{eddy}}=
+    N_c\frac{\pi d^4}{128\rho}
+    \sum_{i\in\mathrm{wire\ points}}\sum_h
+    (hp\Omega)^2 |\mathbf{B}_{\perp,h}(\mathbf{x}_i)|_{\mathrm{pk}}^2\Delta l_i .
+\end{align}
+The coefficient $1/128$ assumes sinusoidal peak magnetic-flux-density amplitudes; an RMS phasor convention requires a corresponding coefficient change.
+
+A separate fast 2D cylindrical harmonic model is also implemented for scaling checks.  For NS alternating magnets it uses spatial orders
+\begin{align}
+    n=(2q-1)p, \qquad q=1,2,3,\ldots,
+\end{align}
+and gap attenuation such as
+\begin{align}
+    B_n(R_c)\approx B_{n,0}\left(\frac{R_m}{R_c}\right)^{n+1}
+    \quad\mathrm{or}\quad
+    B_n(g)\approx B_{n,0}\exp(-n g/R_m).
+\end{align}
+This 2D model is intended to verify the expected trends $P\propto\Omega^2$, $P\propto d^4$, $P\propto\rho^{-1}$, and rapid high-harmonic decay with air gap.
+
 \end{document}
